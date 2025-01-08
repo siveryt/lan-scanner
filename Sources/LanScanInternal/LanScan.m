@@ -90,39 +90,8 @@
     return true;
 }
 
-//-(NSString*) getDownloadedVendorsDictionaryPath {
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    if (![self isEmpty:paths]) {
-//        return [[paths objectAtIndex:0] stringByAppendingPathComponent: VENDORS_DICTIONARY];
-//    }
-//    return nil;
-//}
-//
-//-(NSMutableDictionary*) downloadedVendorsDictionary {
-//    NSString *path = [self getDownloadedVendorsDictionaryPath];
-//    if(![self isEmpty:path]){
-//        NSMutableDictionary *dict = [[NSDictionary dictionaryWithContentsOfFile: path] mutableCopy];
-//        if(dict == nil){
-//            dict = [NSMutableDictionary new];
-//        }
-//        return dict;
-//    }
-//    return [NSMutableDictionary new];
-//}
 
 - (void)start {
-    
-    /*deb(@"start scan for router: %@", [self getRouterIP]);*/
-
-    //Initializing the dictionary that holds the Brands name for each MAC Address
-
-//    self.brandDictionary = [[NSDictionary dictionaryWithContentsOfFile:[SWIFTPM_MODULE_BUNDLE pathForResource: @"data" ofType: @"plist"]] mutableCopy];
-
-    //Initializing the dictionary that holds the Brands downloaded from the internet
-//    NSMutableDictionary *vendors = [self downloadedVendorsDictionary];
-//    if(![self isEmpty:vendors]){
-//        [self.brandDictionary addEntriesFromDictionary: vendors];
-//    }
     
 
     self.localAddress = [self localIPAddress];
@@ -163,37 +132,10 @@
             if(error == nil) {
                 
                 NSMutableString *deviceHostName = [[self hostnamesForAddress: deviceIPAddress] mutableCopy];
-                /*if([deviceIPAddress isEqualToString:[self getRouterIP]]){
-                    [deviceHostName appendString: @" (router)"];
-                }*/
-                
-                /*NSString *deviceMac = [self ip2mac: deviceIPAddress];
-                NSString *deviceBrand = [self.brandDictionary objectForKey: [self makeKeyFromMAC: deviceMac]];
-                
-                if([self isEmpty:deviceBrand]) {
-                    
-                    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"https://api.macvendors.com/%@", deviceMac]];
-                    /// Synchronous URL loading of  `DispatchQueue.main.async`
-                    NSData *data = [NSData dataWithContentsOfURL: url];
-                    if(![self isEmpty: data]) {
-                        deviceBrand = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                        if(![self isEmpty:deviceBrand]){
-                            
-                            NSMutableDictionary *vendors = [self downloadedVendorsDictionary];
-                            NSString *path = [self getDownloadedVendorsDictionaryPath];
-                            if(![self isEmpty: path]){
-                                vendors[[self makeKeyFromMAC:deviceMac]] = deviceBrand;
-                                [vendors writeToFile:path atomically:YES];
-                            }
-                        }
-                    }
-                }*/
                 
                 NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       deviceHostName != nil ? deviceHostName : @"", DEVICE_NAME,
-                                      deviceIPAddress != nil ? deviceIPAddress : @"", DEVICE_IP_ADDRESS,/*
-                                      deviceMac != nil ? deviceMac : @"", DEVICE_MAC,
-                                      deviceBrand != nil ? deviceBrand : @"", DEVICE_BRAND,*/
+                                      deviceIPAddress != nil ? deviceIPAddress : @"", DEVICE_IP_ADDRESS,
                                       nil];
                 
                 [self.delegate lanScanDidFindNewDevice: dict];
@@ -222,49 +164,6 @@
     }
     return nil;
 }
-/*
--(NSString*)ip2mac: (NSString*)strIP {
-    
-    const char *ip = [strIP UTF8String];
-    
-    int sockfd = 0;
-    unsigned char buf[BUFLEN];
-    unsigned char buf2[BUFLEN];
-    ssize_t n = 0;
-    struct rt_msghdr *rtm;
-    struct sockaddr_in *sin;
-    memset(buf, 0, sizeof(buf));
-    memset(buf2, 0, sizeof(buf2));
-    
-    sockfd = socket(AF_ROUTE, SOCK_RAW, 0);
-    rtm = (struct rt_msghdr *) buf;
-    rtm->rtm_msglen = sizeof(struct rt_msghdr) + sizeof(struct sockaddr_in);
-    rtm->rtm_version = RTM_VERSION;
-    rtm->rtm_type = RTM_GET;
-    rtm->rtm_addrs = RTA_DST;
-    rtm->rtm_flags = RTF_LLINFO;
-    rtm->rtm_pid = getpid();
-    rtm->rtm_seq = SEQ;
-    
-    sin = (struct sockaddr_in *) (rtm + 1);
-    sin->sin_len = sizeof(struct sockaddr_in);
-    sin->sin_family = AF_INET;
-    sin->sin_addr.s_addr = inet_addr(ip);
-    write(sockfd, rtm, rtm->rtm_msglen);
-    
-    n = read(sockfd, buf2, BUFLEN);
-    close(sockfd);
-    
-    if (n != 0) {
-        int index =  sizeof(struct rt_msghdr) + sizeof(struct sockaddr_inarp) + 8;
-        NSString *macAddress =[NSString stringWithFormat:@"%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x",buf2[index+0], buf2[index+1], buf2[index+2], buf2[index+3], buf2[index+4], buf2[index+5]];
-        if ([macAddress isEqualToString:@"00:00:00:00:00:00"] ||[macAddress isEqualToString:@"08:00:00:00:00:00"] ) {
-            return nil;
-        }
-        return macAddress;
-    }
-    return nil;
-}*/
 
 - (NSString *)hostnamesForAddress:(NSString *)address {
     struct addrinfo *result = NULL;
@@ -527,35 +426,5 @@
     }
     return r;
 }
-/*
--(NSString*) getRouterIP {
-    struct in_addr gatewayaddr;
-    int r = [self getDefaultGateway:(&(gatewayaddr.s_addr))];
-    if (r >= 0) {
-        return [NSString stringWithUTF8String:inet_ntoa(gatewayaddr)];
-    }
-    
-    return @"";
-}*/
-
-//-(NSString*) getCurrentWifiSSID {
-//#if TARGET_IPHONE_SIMULATOR
-//    return @"Sim_err_SSID_NotSupported";
-//#else
-//    NSString *data = nil;
-//    CFDictionaryRef dict = CNCopyCurrentNetworkInfo((CFStringRef) DEFAULT_WIFI_INTERFACE);
-//    if (dict) {
-//        deb(@"AP Wifi: %@", dict);
-//        data = [NSString stringWithString:(NSString *)CFDictionaryGetValue(dict, @"SSID")];
-//        CFRelease(dict);
-//    }
-//
-//    if (data == nil) {
-//        data = @"none";
-//    }
-//
-//    return data;
-//#endif
-//}
 
 @end

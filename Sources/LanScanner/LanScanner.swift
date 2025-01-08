@@ -12,8 +12,6 @@ public struct LanDevice {
     public var name: String
     public var ipAddress: String
     public var id: UUID { .init() }
-    /*public var mac: String
-    public var brand: String*/
 }
 
 public protocol LanScannerDelegate: AnyObject {
@@ -63,9 +61,7 @@ extension LanScanner: LANScanDelegate {
         delegate?.lanScanDidFindNewDevice(
             .init(
                 name: device[DEVICE_NAME] ?? "",
-                ipAddress: device[DEVICE_IP_ADDRESS] ?? ""//,
-                /*mac: device[DEVICE_MAC] ?? "",
-                brand: device[DEVICE_BRAND] ?? ""*/
+                ipAddress: device[DEVICE_IP_ADDRESS] ?? ""
             )
         )
     }
