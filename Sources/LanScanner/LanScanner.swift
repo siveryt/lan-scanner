@@ -11,6 +11,7 @@ import CoreGraphics
 public struct LanDevice {
     public var name: String
     public var ipAddress: String
+    public var id: UUID { .init() }
     /*public var mac: String
     public var brand: String*/
 }
