@@ -18,10 +18,7 @@ let package = Package(
         ),
         .target(
             name: "LanScanInternal",
-            dependencies: [],
-            resources: [
-                .process("Resources")
-            ]
+            dependencies: []
         ),
         .testTarget(
             name: "LanScannerTests",

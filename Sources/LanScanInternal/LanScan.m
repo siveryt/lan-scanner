@@ -90,39 +90,39 @@
     return true;
 }
 
--(NSString*) getDownloadedVendorsDictionaryPath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    if (![self isEmpty:paths]) {
-        return [[paths objectAtIndex:0] stringByAppendingPathComponent: VENDORS_DICTIONARY];
-    }
-    return nil;
-}
-
--(NSMutableDictionary*) downloadedVendorsDictionary {
-    NSString *path = [self getDownloadedVendorsDictionaryPath];
-    if(![self isEmpty:path]){
-        NSMutableDictionary *dict = [[NSDictionary dictionaryWithContentsOfFile: path] mutableCopy];
-        if(dict == nil){
-            dict = [NSMutableDictionary new];
-        }
-        return dict;
-    }
-    return [NSMutableDictionary new];
-}
+//-(NSString*) getDownloadedVendorsDictionaryPath {
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    if (![self isEmpty:paths]) {
+//        return [[paths objectAtIndex:0] stringByAppendingPathComponent: VENDORS_DICTIONARY];
+//    }
+//    return nil;
+//}
+//
+//-(NSMutableDictionary*) downloadedVendorsDictionary {
+//    NSString *path = [self getDownloadedVendorsDictionaryPath];
+//    if(![self isEmpty:path]){
+//        NSMutableDictionary *dict = [[NSDictionary dictionaryWithContentsOfFile: path] mutableCopy];
+//        if(dict == nil){
+//            dict = [NSMutableDictionary new];
+//        }
+//        return dict;
+//    }
+//    return [NSMutableDictionary new];
+//}
 
 - (void)start {
     
-    deb(@"start scan for router: %@", [self getRouterIP]);
+    /*deb(@"start scan for router: %@", [self getRouterIP]);*/
 
     //Initializing the dictionary that holds the Brands name for each MAC Address
 
-    self.brandDictionary = [[NSDictionary dictionaryWithContentsOfFile:[SWIFTPM_MODULE_BUNDLE pathForResource: @"data" ofType: @"plist"]] mutableCopy];
+//    self.brandDictionary = [[NSDictionary dictionaryWithContentsOfFile:[SWIFTPM_MODULE_BUNDLE pathForResource: @"data" ofType: @"plist"]] mutableCopy];
 
     //Initializing the dictionary that holds the Brands downloaded from the internet
-    NSMutableDictionary *vendors = [self downloadedVendorsDictionary];
-    if(![self isEmpty:vendors]){
-        [self.brandDictionary addEntriesFromDictionary: vendors];
-    }
+//    NSMutableDictionary *vendors = [self downloadedVendorsDictionary];
+//    if(![self isEmpty:vendors]){
+//        [self.brandDictionary addEntriesFromDictionary: vendors];
+//    }
     
 
     self.localAddress = [self localIPAddress];
@@ -163,11 +163,11 @@
             if(error == nil) {
                 
                 NSMutableString *deviceHostName = [[self hostnamesForAddress: deviceIPAddress] mutableCopy];
-                if([deviceIPAddress isEqualToString:[self getRouterIP]]){
+                /*if([deviceIPAddress isEqualToString:[self getRouterIP]]){
                     [deviceHostName appendString: @" (router)"];
-                }
+                }*/
                 
-                NSString *deviceMac = [self ip2mac: deviceIPAddress];
+                /*NSString *deviceMac = [self ip2mac: deviceIPAddress];
                 NSString *deviceBrand = [self.brandDictionary objectForKey: [self makeKeyFromMAC: deviceMac]];
                 
                 if([self isEmpty:deviceBrand]) {
@@ -187,13 +187,13 @@
                             }
                         }
                     }
-                }
+                }*/
                 
                 NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       deviceHostName != nil ? deviceHostName : @"", DEVICE_NAME,
-                                      deviceIPAddress != nil ? deviceIPAddress : @"", DEVICE_IP_ADDRESS,
+                                      deviceIPAddress != nil ? deviceIPAddress : @"", DEVICE_IP_ADDRESS,/*
                                       deviceMac != nil ? deviceMac : @"", DEVICE_MAC,
-                                      deviceBrand != nil ? deviceBrand : @"", DEVICE_BRAND,
+                                      deviceBrand != nil ? deviceBrand : @"", DEVICE_BRAND,*/
                                       nil];
                 
                 [self.delegate lanScanDidFindNewDevice: dict];
@@ -222,7 +222,7 @@
     }
     return nil;
 }
-
+/*
 -(NSString*)ip2mac: (NSString*)strIP {
     
     const char *ip = [strIP UTF8String];
@@ -264,7 +264,7 @@
         return macAddress;
     }
     return nil;
-}
+}*/
 
 - (NSString *)hostnamesForAddress:(NSString *)address {
     struct addrinfo *result = NULL;
@@ -527,7 +527,7 @@
     }
     return r;
 }
-
+/*
 -(NSString*) getRouterIP {
     struct in_addr gatewayaddr;
     int r = [self getDefaultGateway:(&(gatewayaddr.s_addr))];
@@ -536,7 +536,7 @@
     }
     
     return @"";
-}
+}*/
 
 //-(NSString*) getCurrentWifiSSID {
 //#if TARGET_IPHONE_SIMULATOR
